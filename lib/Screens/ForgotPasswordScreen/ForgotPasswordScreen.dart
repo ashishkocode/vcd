@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
@@ -12,18 +15,18 @@ import 'package:provider/provider.dart';
 
 import 'package:vcd/PageTransitions/FadeAnimation.dart';
 import 'package:vcd/Providers/DeviceProvider.dart';
-import 'package:vcd/Screens/ForgotPasswordScreen/ForgotPasswordScreen.dart';
 import 'package:vcd/Screens/HomePageScreen/HomePageScreen.dart';
 import 'package:vcd/models/SignInmodel.dart';
 
-class SignInScreen extends StatefulWidget {
-  SignInScreen({Key? key}) : super(key: key);
+class ForgotPasswordScreen extends StatefulWidget {
+  final response;
+  ForgotPasswordScreen({Key? key, this.response}) : super(key: key);
 
   @override
-  _SignInScreenState createState() => _SignInScreenState();
+  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   bool _loading = false;
@@ -32,9 +35,20 @@ class _SignInScreenState extends State<SignInScreen> {
   bool isOk = true;
   String? message;
   var deviceData;
+  late Widget _image = Container(
+    child: CircularProgressIndicator(),
+    width: 100,
+    alignment: Alignment.center,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _updateImgWidget();
+  }
 
   final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
+  final TextEditingController _captcha = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
       deviceData = device;
     });
 
-    // print(MediaQuery.of(context).size.height);
+    //  print(Image.memory(widget.response));
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Container(
@@ -99,7 +113,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                       0.035,
                                 ),
                                 child: Text(
-                                  'Welcome Back'.toUpperCase(),
+                                  'Forgot Password'.toUpperCase(),
                                   style: TextStyle(
                                     fontSize: 32,
                                     fontWeight: FontWeight.w700,
@@ -185,23 +199,40 @@ class _SignInScreenState extends State<SignInScreen> {
                                 SizedBox(
                                   height: 15,
                                 ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 100, alignment: Alignment.center,
+                                  // color: Colors.black,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      _image,
+                                      IconButton(
+                                        onPressed: () {
+                                          _updateImgWidget();
+                                        },
+                                        icon: Icon(Icons.replay_rounded),
+                                        color: Color(0xffD3E7F1),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 TextFormField(
-                                  textInputAction: TextInputAction.done,
-                                  onSaved: (val) =>
-                                      _password.text = val as String,
-                                  controller: _password,
-                                  validator: (value) {
-                                    if (_password.text.isEmpty) {
-                                      return 'Please Enter Password';
-                                    }
-                                    return null;
-                                  },
-                                  obscureText: _isObscure,
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xff72C3C9),
                                   ),
+                                  onSaved: (val) =>
+                                      _captcha.text = val as String,
+                                  controller: _captcha,
+                                  validator: (value) {
+                                    if (_email.text.isEmpty) {
+                                      return 'Please Enter Captcha';
+                                    }
+                                    return null;
+                                  },
+                                  textInputAction: TextInputAction.next,
                                   decoration: InputDecoration(
                                     errorStyle: TextStyle(
                                       fontSize: 10,
@@ -209,28 +240,14 @@ class _SignInScreenState extends State<SignInScreen> {
                                       color: Color(0xffBDE5E8),
                                     ),
                                     errorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0xffBDE5E8),
-                                      ),
-                                    ),
+                                        borderSide: BorderSide(
+                                      color: Color(0xffBDE5E8),
+                                    )),
                                     focusedErrorBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
                                       color: Color(0xff72C3C9),
                                     )),
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _isObscure = !_isObscure;
-                                        });
-                                      },
-                                      icon: Icon(
-                                        _isObscure
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        color: Color(0xff72C3C9),
-                                      ),
-                                    ),
-                                    hintText: 'Password',
+                                    hintText: 'Captcha',
                                     hintStyle: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
@@ -288,60 +305,63 @@ class _SignInScreenState extends State<SignInScreen> {
                             ],
                           ),
                         ),
+                      ],
+                    ),
+                    Column(
+                      children: [
                         Container(
-                          margin: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height > 642
-                                  ? 25
-                                  : 10),
-                          alignment: Alignment.centerLeft,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.push(context,
-                                  FadeRoute(page: ForgotPasswordScreen()));
-                            },
-                            child: Text(
-                              'Forgot Password?',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff72C3C9),
-                                decoration: TextDecoration.underline,
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(top: 50),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Have an account?",
+                                style: TextStyle(
+                                  color: Color(0xffD3E7F1),
+                                  fontWeight: FontWeight.w300,
+                                ),
                               ),
-                            ),
+                              TextButton(
+                                onPressed: () {},
+                                child: Text(
+                                  'Signin',
+                                  style: TextStyle(
+                                    color: Color(0xffF2A744),
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          //margin: EdgeInsets.only(top: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account?",
+                                style: TextStyle(
+                                  color: Color(0xffD3E7F1),
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {},
+                                child: Text(
+                                  'Signup',
+                                  style: TextStyle(
+                                    color: Color(0xffF2A744),
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ],
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height > 670
-                              ? MediaQuery.of(context).size.height > 750
-                                  ? MediaQuery.of(context).size.height * 0.15
-                                  : MediaQuery.of(context).size.height * 0.1
-                              : 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Don't have an account?",
-                            style: TextStyle(
-                              color: Color(0xffD3E7F1),
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              'Signup',
-                              style: TextStyle(
-                                color: Color(0xffF2A744),
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
                     ),
                   ],
                 ),
@@ -358,13 +378,15 @@ class _SignInScreenState extends State<SignInScreen> {
     if (_formkey.currentState!.validate()) {
       _formkey.currentState!.save();
 
-      String baseUrl = 'https://api.vcdplans.com/auth/jwt';
+      String baseUrl = 'https://api.vcdplans.com/auth/forgotPwd/step1';
 
       var body = {
         'username': _email.text,
-        'password': _password.text,
+        'captcha': _captcha.text,
         'deviceID': deviceData,
       };
+
+      print(jsonEncode(body));
 
       final response = await http.post(Uri.parse(baseUrl),
           headers: {
@@ -373,13 +395,16 @@ class _SignInScreenState extends State<SignInScreen> {
           body: jsonEncode(body));
 
       final data = SignIn.fromJson(jsonDecode(response.body));
-      print(data.isOK);
+      setState(() {
+        _loading = false;
+      });
 
       if (data.isOK) {
-        Navigator.push(context, FadeRoute(page: HomePageScreen()));
+        // Navigator.push(context, FadeRoute(page: HomePageScreen()));
         setState(() {
           _loading = false;
         });
+        print(data.params);
       } else {
         setState(() {
           _loading = false;
@@ -393,5 +418,26 @@ class _SignInScreenState extends State<SignInScreen> {
       });
     }
     //Navigator.push(context, FadeRoute(page: HomePageScreen()));
+  }
+
+  _updateImgWidget() async {
+    var baseurl =
+        "https://api.vcdplans.com/auth/captcha?deviceID=${deviceData}&rnd=32";
+
+    print(baseurl);
+
+    setState(() {
+      _image = Container(
+        child: CircularProgressIndicator(),
+        width: 100,
+        alignment: Alignment.center,
+      );
+    });
+    final ByteData imageData =
+        await NetworkAssetBundle(Uri.parse(baseurl)).load("");
+    final Uint8List bytes = imageData.buffer.asUint8List();
+    setState(() {
+      _image = Image.memory(bytes);
+    });
   }
 }

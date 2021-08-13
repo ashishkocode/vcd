@@ -7,8 +7,8 @@ class DeviceProvider extends ChangeNotifier {
     return deviceData;
   }
 
-  void getDeviceDataDetails(deviceData) {
-    deviceData = deviceData;
+  void getDeviceDataDetails(data) {
+    deviceData = data;
     notifyListeners();
   }
 }

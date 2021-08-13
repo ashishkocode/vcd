@@ -26,6 +26,8 @@ class _SplashScreenState extends State<SplashScreen> {
   String deviceVersion = '';
   String identifier = '';
 
+  var deviceInfo;
+
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 
   void startTimer() async {
@@ -53,11 +55,13 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
+
         setState(() {
           deviceName = build.model;
           deviceVersion = build.version.toString();
           identifier = build.androidId;
         });
+        deviceInfo = build;
       } else if (Platform.isIOS) {
         var data = await deviceInfoPlugin.iosInfo;
         setState(() {
@@ -65,18 +69,15 @@ class _SplashScreenState extends State<SplashScreen> {
           deviceVersion = data.systemVersion;
           identifier = data.identifierForVendor;
         }); //UUID for iOS
+
+        deviceInfo = {
+          'deviceName': data.name,
+          'deviceVersion': data.systemVersion,
+          'identifier': data.identifierForVendor,
+        };
       }
 
-      var deviceInfo = {
-        'deviceName': deviceName,
-        'deviceVersion': deviceVersion,
-        'identifier': identifier,
-      };
-
-      void getDeviceInfo(BuildContext context, deviceInfo) {
-        Provider.of<DeviceProvider>(context, listen: false)
-            .getDeviceDataDetails(jsonEncode(deviceInfo));
-      }
+      getDeviceInfo(context, deviceInfo);
     } catch (e) {
       print(e);
     }
@@ -84,7 +85,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(deviceVersion);
     return Scaffold(
         body: Container(
       width: double.infinity,
@@ -103,5 +103,11 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     ));
+  }
+
+  void getDeviceInfo(BuildContext context, deviceInfo) {
+    print(deviceInfo.androidId.toString());
+    Provider.of<DeviceProvider>(context, listen: false)
+        .getDeviceDataDetails(deviceInfo.androidId.toString());
   }
 }

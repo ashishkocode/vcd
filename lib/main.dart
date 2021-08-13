@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           fontFamily: 'Gotham',
+          primaryColor: Color(0xffB5E5DB),
         ),
         home: SplashScreen(),
         routes: {
