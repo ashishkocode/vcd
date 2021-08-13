@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vcd/Providers/DeviceProvider.dart';
 import 'package:vcd/Providers/HomePageProvider.dart';
 import 'package:vcd/Screens/HomePageScreen/HomePageScreen.dart';
 import 'package:vcd/Screens/SplashScreen/SplashScreen.dart';
@@ -19,11 +20,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => HomePageProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => DeviceProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          fontFamily: 'Poppins',
+          fontFamily: 'Gotham',
         ),
         home: SplashScreen(),
         routes: {

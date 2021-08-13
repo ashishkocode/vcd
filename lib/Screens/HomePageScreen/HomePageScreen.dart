@@ -25,187 +25,98 @@ class _HomePageScreenState extends State<HomePageScreen> {
     var index = Provider.of<HomePageProvider>(context).index;
 
     return Scaffold(
-      backgroundColor: Color(0xffeaf3f4),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Color(0xff405b81),
-        title: index == 0
-            ? null
-            : Text(
-                'Member Card',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  height: 1.3,
-                ),
-              ),
-        centerTitle: true,
-        leading: index == 0
-            ? IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.menu_rounded,
-                ),
-              )
-            : IconButton(
-                onPressed: () {
-                  changeIndex(context, 0);
-                },
-                icon: Icon(
-                  Icons.arrow_back,
-                ),
-              ),
+        toolbarHeight: 70,
+        leading: InkWell(
+          onTap: () {},
+          child: Image.asset('assets/images/VCD-white-micro-logo.png'),
+        ),
         actions: index == 0
             ? [
-                IconButton(
+                TextButton(
                   onPressed: () {},
-                  icon: Icon(
-                    Icons.notifications,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Color(0xffD3E7F1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(100),
+                      ),
+                    ),
+                    child: Text(
+                      'Ashish'.substring(0, 2).toUpperCase(),
+                      textAlign: TextAlign.center,
+                    ),
+                    padding: EdgeInsets.all(10),
                   ),
                 ),
               ]
             : null,
       ),
-      body: index == 4
-          ? MemberCardScreen()
-          : Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Color(0xff405b81),
+      body: Column(
+        children: [
+          Container(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              decoration: BoxDecoration(
+                color: Color(0xffD3E7F1),
+              ),
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  index == 0
+                      ? Container(
+                          width: 42,
+                          height: 42,
+                        )
+                      : Container(
+                          width: 42,
+                          height: 42,
+                          child: IconButton(
+                            onPressed: () {
+                              changeIndex(context, 0);
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_ios_rounded,
+                              color: Color(0xff3D5A80),
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                  Text(
+                    index == 4
+                        ? 'Member Card'.toUpperCase()
+                        : 'DashBoard'.toUpperCase(),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff3D5A80),
+                      fontSize: 25,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "There's More to You".toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            height: 1.3,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 18),
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Than what meets the eye".toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            height: 1.3,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      Container(
-                        width: 260,
-                        margin: EdgeInsets.only(top: 10),
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Finaly, a vison plan that makes sense.",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            height: 1.3,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                    ],
+                  Container(
+                    width: 42,
+                    height: 42,
                   ),
-                ),
-                Expanded(
+                ],
+              )),
+          index == 4
+              ? MemberCardScreen()
+              : Expanded(
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Color(0xffeaf3f4),
+                      color: Colors.white,
                     ),
                     child: ReportScreen(),
                   ),
                 ),
-              ],
-            ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        elevation: 0,
-        child: Container(
-          height: 60,
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              InkWell(
-                onTap: () {},
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(100),
-                    ),
-                    color: currentIndex == 1
-                        ? Color(0xff405b81)
-                        : Colors.transparent,
-                  ),
-                  child: Icon(
-                    Icons.home_outlined,
-                    color: currentIndex == 1 ? Colors.white : Color(0xff405b81),
-                    size: 24,
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  changeIndex(context, 0);
-                },
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(100),
-                    ),
-                    color: index == 0 ? Color(0xff405b81) : Colors.transparent,
-                  ),
-                  child: Icon(
-                    Icons.description_outlined,
-                    color: index == 0 ? Colors.white : Color(0xff405b81),
-                    size: 24,
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {},
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(100),
-                    ),
-                    color: currentIndex == 2
-                        ? Color(0xff405b81)
-                        : Colors.transparent,
-                  ),
-                  child: Icon(
-                    Icons.account_circle_outlined,
-                    color: currentIndex == 2 ? Colors.white : Color(0xff405b81),
-                    size: 24,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
